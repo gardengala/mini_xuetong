@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}课程大厅 - 迷你学习通{% endblock %}
+
+{% block content %}
+<h4 class="mb-4">课程大厅</h4>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for course in courses %}
+    <div class="col">
+        <div class="card h-100 dashboard-card">
+            <div class="card-body">
+                <h5 class="card-title text-primary">{{ course.name }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted small">授课教师：{{ course.teacher.username }}</h6>
+                <p class="card-text text-secondary small mt-3" style="min-height: 3rem;">{{ course.description or '暂无简介' }}</p>
+            </div>
+            <div class="card-footer bg-white border-top-0 pt-0 d-flex justify-content-between align-items-center">
+                <a href="{{ url_for('course_detail', course_id=course.id) }}" class="btn btn-sm btn-outline-primary">查看详情</a>
+                
+                {% if not current_user.is_teacher %}
+                    {% if course.id in enrolled_ids %}
+                        <form method="post" action="{{ url_for('drop_course', course_id=course.id) }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">退课</button>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{{ url_for('enroll_course', course_id=course.id) }}">
+                            <button type="submit" class="btn btn-sm btn-primary">选课</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12"><div class="alert alert-info">暂无课程。</div></div>
+    {% endfor %}
+</div>
+{% endblock %}

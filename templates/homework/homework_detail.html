@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}{{ hw.title }} - 作业详情{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4><a href="{{ url_for('homework_list', course_id=hw.course.id) }}" class="text-decoration-none text-secondary">&laquo; 返回作业列表</a> | 作业详情</h4>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-{% if is_owner %}4{% else %}8{% endif %}">
+        <div class="card dashboard-card">
+            <div class="card-header">作业要求</div>
+            <div class="card-body">
+                <h5 class="text-primary">{{ hw.title }}</h5>
+                <p class="text-danger small">截止时间：{{ hw.deadline.strftime('%Y-%m-%d %H:%M') }}</p>
+                <hr>
+                <p>{{ hw.description or '无具体说明。' }}</p>
+                
+                {% if not is_owner %}
+                    {% if my_sub %}
+                        <div class="alert alert-success mt-4">
+                            <h6 class="alert-heading fw-bold">你已于 {{ my_sub.submit_time.strftime('%m-%d %H:%M') }} 提交</h6>
+                            <p class="mb-0">内容：{{ my_sub.content or '(无文本内容)' }}</p>
+                            {% if my_sub.file_path %}
+                                <p class="mb-0 mt-1">附件：<a href="{{ url_for('static', filename=my_sub.file_path) }}" target="_blank">下载附件</a></p>
+                            {% endif %}
+                            <hr>
+                            <p class="mb-0 fw-bold">得分：{{ my_sub.score if my_sub.score is not none else '待批改' }}</p>
+                        </div>
+                        {% if not my_sub.score is not none %}
+                        <a href="{{ url_for('submit_homework', homework_id=hw.id) }}" class="btn btn-outline-primary w-100 mt-2">重新提交 / 修改</a>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-warning mt-4">你尚未提交本次作业。</div>
+                        <a href="{{ url_for('submit_homework', homework_id=hw.id) }}" class="btn btn-primary w-100 mt-2">去提交作业</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if is_owner %}
+    <div class="col-md-8">
+        <div class="card dashboard-card">
+            <div class="card-header">学生提交记录 ({{ submissions|length }})</div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead class="table-light">
+                        <tr><th>学生</th><th>提交时间</th><th>内容/附件</th><th>分数</th><th>操作</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in submissions %}
+                        <tr>
+                            <td class="align-middle">{{ sub.student.username }}</td>
+                            <td class="align-middle small">{{ sub.submit_time.strftime('%m-%d %H:%M') }}</td>
+                            <td class="align-middle">
+                                <div class="text-truncate" style="max-width: 150px;">{{ sub.content or '无' }}</div>
+                                {% if sub.file_path %}
+                                    <a href="{{ url_for('static', filename=sub.file_path) }}" target="_blank" class="small">下载附件</a>
+                                {% endif %}
+                            </td>
+                            <td class="align-middle fw-bold text-danger">{{ sub.score if sub.score is not none else '-' }}</td>
+                            <td class="align-middle">
+                                <form method="post" action="{{ url_for('grade_submission', sub_id=sub.id) }}" class="d-flex">
+                                    <input type="number" step="0.1" name="score" class="form-control form-control-sm me-2" style="width: 80px;" value="{{ sub.score or '' }}" required>
+                                    <button type="submit" class="btn btn-sm btn-outline-success">打分</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="text-center text-muted py-4">暂无学生提交</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

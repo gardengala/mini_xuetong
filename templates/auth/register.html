@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}注册 - 迷你学习通{% endblock %}
+{% block content %}
+<div class="card shadow-sm auth-card">
+    <div class="card-header">创建账号</div>
+    <div class="card-body p-4">
+        <form method="post" novalidate>
+            <div class="mb-3">
+                <label for="username" class="form-label">用户名 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="username" name="username" value="{{ username or '' }}" required autofocus>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">邮箱（选填）</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ email or '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label d-block">身份 <span class="text-danger">*</span></label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="role" id="role-student" value="student" {% if role != 'teacher' %}checked{% endif %}>
+                    <label class="form-check-label" for="role-student">学生</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="role" id="role-teacher" value="teacher" {% if role == 'teacher' %}checked{% endif %}>
+                    <label class="form-check-label" for="role-teacher">教师</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">密码 <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="mb-3">
+                <label for="password2" class="form-label">确认密码 <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" id="password2" name="password2" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">注 册</button>
+        </form>
+        <hr class="my-4">
+        <p class="text-center text-muted mb-0">已有账号？<a href="{{ url_for('login') }}">返回登录</a></p>
+    </div>
+</div>
+{% endblock %}

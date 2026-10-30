@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}个人中心 - 迷你学习通{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- 左侧：基本信息 -->
+    <div class="col-md-4">
+        <div class="card dashboard-card">
+            <div class="card-body text-center py-5">
+                <div class="bg-primary text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3 shadow" 
+                     style="width: 80px; height: 80px; font-size: 2rem;">
+                    {{ current_user.username[0]|upper }}
+                </div>
+                <h4 class="fw-bold">{{ current_user.username }}</h4>
+                <p class="text-muted mb-1">{{ current_user.role_label }}</p>
+                <p class="text-muted small">注册时间：{{ current_user.create_time.strftime('%Y-%m-%d') }}</p>
+                
+                <hr class="my-4">
+                
+                <div class="text-start px-3">
+                    <p class="mb-2"><strong>邮箱：</strong> {{ current_user.email or '未填写' }}</p>
+                    <p class="mb-2"><strong>我的课程：</strong> {{ courses|length }} 门</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右侧：学习进度 -->
+    <div class="col-md-8">
+        <div class="card dashboard-card mb-4">
+            <div class="card-header">学习进度统计</div>
+            <div class="card-body">
+                <!-- 作业进度 -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="fw-bold">作业完成度</span>
+                        <span class="text-muted small">已交 {{ submitted_count }} / 共 {{ total_homeworks }} 次</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ homework_rate }}%;" 
+                             aria-valuenow="{{ homework_rate }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+
+                <!-- 签到进度 -->
+                <div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="fw-bold">出勤率</span>
+                        <span class="text-muted small">已签 {{ signed_count }} / 共 {{ total_signs }} 次</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ attendance_rate }}%;" 
+                             aria-valuenow="{{ attendance_rate }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card dashboard-card">
+            <div class="card-header">我的课程</div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for course in courses %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <a href="{{ url_for('course_detail', course_id=course.id) }}" class="fw-bold text-primary text-decoration-none">
+                                《{{ course.name }}》
+                            </a>
+                            <div class="small text-muted mt-1">授课教师：{{ course.teacher.username }}</div>
+                        </div>
+                        <span class="badge bg-light text-dark border">{{ course.schedules|length }} 个排课</span>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-center text-muted py-4">暂无课程</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+/* ===== 迷你学习通 全局样式 ===== */
+body {
+    min-height: 100vh;
+    background-color: #f5f7fa;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* 登录 / 注册卡片 */
+.auth-card {
+    max-width: 440px;
+    margin: 6vh auto;
+    border: none;
+    border-radius: .75rem;
+}
+.auth-card .card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #eef1f5;
+    border-radius: .75rem .75rem 0 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* 通用卡片 */
+.dashboard-card {
+    border: none;
+    border-radius: .75rem;
+    box-shadow: 0 .125rem .5rem rgba(15, 23, 42, .06);
+    transition: box-shadow 0.3s ease;
+}
+.dashboard-card:hover {
+    box-shadow: 0 .5rem 1rem rgba(15, 23, 42, .1);
+}
+.dashboard-card .card-header {
+    background-color: #fff;
+    font-weight: 600;
+    border-bottom: 1px solid #eef1f5;
+    border-radius: .75rem .75rem 0 0 !important;
+}
+
+/* 空状态占位 */
+.placeholder-box {
+    border: 1px dashed #cbd5e1;
+    border-radius: .5rem;
+    padding: 2rem 1rem;
+    text-align: center;
+    color: #94a3b8;
+    background-color: #fbfcfe;
+}
+
+/* 页脚 */
+.app-footer {
+    color: #94a3b8;
+    font-size: .85rem;
+    padding: 1.5rem 0;
+}
+
+/* 课表样式 */
+.schedule-table {
+    table-layout: fixed;
+}
+.schedule-table th {
+    font-weight: 500;
+    color: #475569;
+}
+.schedule-table td {
+    height: 80px;
+    vertical-align: top;
+}
+.course-block {
+    display: block;
+    background-color: #e0e7ff;
+    border-radius: 6px;
+    padding: 8px;
+    text-align: center;
+    color: #3730a3;
+    text-decoration: none;
+    height: 100%;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.course-block:hover {
+    background-color: #c7d2fe;
+    color: #312e81;
+    transform: scale(0.98);
+}
+
+/* 进度条动画 */
+.progress-bar {
+    transition: width 1s ease;
+}

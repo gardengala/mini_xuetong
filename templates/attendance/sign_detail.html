@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}签到详情 - {{ sign.course.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card dashboard-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>签到详情 - {{ sign.course.name }}</span>
+                <a href="{{ url_for('attendance') }}" class="btn btn-sm btn-secondary">返回</a>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5 class="mb-3">签到码：<span class="text-danger fs-3 fw-bold">{{ sign.sign_code }}</span></h5>
+                        <p class="text-muted mb-0">发起时间：{{ sign.create_time.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <h5 class="mb-3 text-success">已签到：{{ signed_students|length }} 人</h5>
+                        <h5 class="mb-0 text-danger">未签到：{{ unsigned_students|length }} 人</h5>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="row">
+                    <!-- 已签到名单 -->
+                    <div class="col-md-6 mb-4 mb-md-0">
+                        <h6 class="text-success mb-3"><i class="bi bi-check-circle"></i> 已签到学生</h6>
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr><th>序号</th><th>用户名</th><th>签到时间</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for r in sign.records %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ r.student.username }}</td>
+                                    <td>{{ r.sign_time.strftime('%H:%M:%S') }}</td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="3" class="text-center text-muted">暂无学生签到</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 未签到名单 -->
+                    <div class="col-md-6">
+                        <h6 class="text-danger mb-3"><i class="bi bi-x-circle"></i> 未签到学生</h6>
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr><th>序号</th><th>用户名</th><th>邮箱</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for student in unsigned_students %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ student.username }}</td>
+                                    <td>{{ student.email or '-' }}</td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="3" class="text-center text-muted">全部学生均已签到</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

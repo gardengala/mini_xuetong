@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}首页 - 迷你学习通{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card dashboard-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>我的周课表 - 第 {{ current_week }} 周</span>
+                <div>
+                    <a href="{{ url_for('index', week=current_week-1) }}" class="btn btn-sm btn-outline-secondary {% if current_week <= 1 %}disabled{% endif %}">&laquo; 上一周</a>
+                    <a href="{{ url_for('index', week=current_week+1) }}" class="btn btn-sm btn-outline-secondary ms-2">下一周 &raquo;</a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered text-center schedule-table mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="8%">节次</th><th width="13%">周一</th><th width="13%">周二</th>
+                            <th width="13%">周三</th><th width="13%">周四</th><th width="13%">周五</th>
+                            <th width="13%">周六</th><th width="13%">周日</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for section in range(1, 7) %}
+                        <tr>
+                            <td class="align-middle bg-light fw-bold text-secondary">第{{ section }}节</td>
+                            {% for weekday in range(1, 8) %}
+                                {% set sch = schedule_grid[weekday][section] %}
+                                <td class="p-1 align-middle">
+                                    {% if sch %}
+                                        <a href="{{ url_for('course_detail', course_id=sch.course.id) }}" class="course-block">
+                                            <div class="fw-bold text-truncate">{{ sch.course.name }}</div>
+                                            <div class="small text-truncate">@{{ sch.room or '待定' }}</div>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- 待办签到 -->
+        {% if not current_user.is_teacher and active_signs %}
+        <div class="card dashboard-card mb-3 border-danger border-opacity-25">
+            <div class="card-header text-danger fw-bold d-flex justify-content-between align-items-center">
+                进行中的签到
+                <span class="badge bg-danger rounded-pill">{{ active_signs|length }}</span>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for sign in active_signs %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-bold">{{ sign.course.name }}</div>
+                            <div class="small text-muted">截止：{{ sign.expire_time.strftime('%H:%M:%S') }}</div>
+                        </div>
+                        <a href="{{ url_for('attendance') }}" class="btn btn-sm btn-danger">去签到</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- 待办作业 -->
+        <div class="card dashboard-card mb-3">
+            <div class="card-header">近期作业</div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for hw in todo_homeworks %}
+                    <li class="list-group-item">
+                        <a href="{{ url_for('homework_detail', homework_id=hw.id) }}" class="text-decoration-none fw-bold text-primary">{{ hw.title }}</a>
+                        <div class="small text-muted mt-1">{{ hw.course.name }} | 截止：{{ hw.deadline.strftime('%m-%d %H:%M') }}</div>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-center text-muted py-3">暂无待办作业</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- 最新通知 -->
+        <div class="card dashboard-card">
+            <div class="card-header">最新通知</div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for notice in notices %}
+                    <li class="list-group-item">
+                        <div class="fw-bold">{{ notice.title }}</div>
+                        <div class="small text-secondary mt-1">{{ notice.content }}</div>
+                        <div class="small text-muted mt-1">{{ notice.course.name }} | {{ notice.create_time.strftime('%m-%d') }}</div>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-center text-muted py-3">暂无通知</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

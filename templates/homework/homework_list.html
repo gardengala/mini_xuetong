@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}作业列表 - {{ course.name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4><a href="{{ url_for('course_detail', course_id=course.id) }}" class="text-decoration-none text-secondary">&laquo; 返回课程</a> | 作业列表</h4>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-{% if is_owner %}8{% else %}12{% endif %}">
+        <div class="card dashboard-card">
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>作业标题</th>
+                            <th>截止时间</th>
+                            {% if not is_owner %}<th>提交状态</th>{% endif %}
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hw in homeworks %}
+                        <tr>
+                            <td class="align-middle fw-bold">{{ hw.title }}</td>
+                            <td class="align-middle text-muted">{{ hw.deadline.strftime('%Y-%m-%d %H:%M') }}</td>
+                            {% if not is_owner %}
+                            <td class="align-middle">
+                                {% if hw.id in submitted_hw_ids %}
+                                    <span class="badge bg-success">已提交</span>
+                                {% else %}
+                                    <span class="badge bg-danger">未提交</span>
+                                {% endif %}
+                            </td>
+                            {% endif %}
+                            <td class="align-middle">
+                                <a href="{{ url_for('homework_detail', homework_id=hw.id) }}" class="btn btn-sm btn-outline-primary">
+                                    {% if is_owner %}查看提交{% else %}查看详情{% endif %}
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted py-4">暂无作业</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if is_owner %}
+    <div class="col-md-4">
+        <div class="card dashboard-card">
+            <div class="card-header">发布新作业</div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">作业标题</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">作业要求</label>
+                        <textarea name="description" class="form-control" rows="4"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">截止时间</label>
+                        <input type="datetime-local" name="deadline" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">发布作业</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
