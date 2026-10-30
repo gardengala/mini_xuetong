@@ -1,0 +1,14 @@
+# 忽略本地数据库
+instance/
+*.db
+
+# 忽略上传的作业附件（如果不想把学生的文件传上去的话）
+static/uploads/*
+!static/uploads/.gitkeep
+
+# 忽略 Python 缓存
+__pycache__/
+*.pyc
+
+# 忽略虚拟环境
+venv/
